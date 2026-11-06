@@ -11,8 +11,8 @@
 
 namespace {
 
-constexpr char WIFI_NAME[] = "Goose";
-constexpr char WIFI_PASSWORD[] = "Honk";
+constexpr char WIFI_NAME[] = "ExerciseTracker";
+constexpr char WIFI_PASSWORD[] = "track1234";
 
 // Serve the website and WebSocket endpoint through the same HTTP server.
 AsyncWebServer server(80);
@@ -143,12 +143,19 @@ void initialize_web_dashboard() {
     // Do not automatically format storage if mounting fails.
     isFilesystemReady = LittleFS.begin(false);
 
+    // Stop any previously running access point before applying new credentials.
+    WiFi.softAPdisconnect(true);
     WiFi.mode(WIFI_AP);
+
     WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
 
     if (!WiFi.softAP(WIFI_NAME, WIFI_PASSWORD)) {
         if (Serial) Serial.println("Could not start dashboard Wi-Fi");
         return;
+    }
+
+    if (Serial) {
+        Serial.printf("Wi-Fi started: %s\n", WiFi.softAPSSID().c_str());
     }
 
     server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
@@ -181,7 +188,7 @@ void initialize_web_dashboard() {
 
     isServerStarted = true;
 
-    if (Serial) Serial.println("Dashboard: connect to CurlMonitor, then open http://192.168.4.1");
+    if (Serial) Serial.printf("Dashboard: connect to %s, then open http://192.168.4.1\n", WIFI_NAME);
 }
 
 void handle_web_dashboard() {
