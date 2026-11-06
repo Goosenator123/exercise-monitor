@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#101715" />
+
+    <title>Exercise Monitor · Live session</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="script.js" defer></script>
+  </head>
+
+  <body>
+    <main class="shell">
+      <!-- Header and connection status -->
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="Exercise Monitor home">
+          <span class="brand-mark">E<span>↗</span></span>
+          <span>EXERCISE<span class="brand-light"> MONITOR</span></span>
+        </a>
+
+        <span id="connection" class="connection" role="status">
+          <i></i>
+          <span id="connectionText">Connecting</span>
+        </span>
+      </header>
+
+      <!-- Session introduction -->
+      <section class="intro">
+        <div>
+          <p class="eyebrow">MOVEMENT / LIVE SESSION</p>
+          <h1>Make every rep count.</h1>
+          <p class="subtitle">
+            Your movement, tempo, and heart rate. In one place.
+          </p>
+        </div>
+
+        <div class="exercise-tag">
+          <span class="tag-dot"></span>
+          Biceps curl
+        </div>
+      </section>
+
+      <div id="notice" class="notice" role="status">
+        Connecting to your tracker…
+      </div>
+
+      <!-- Live measurements -->
+      <section class="metrics" aria-label="Live workout readings">
+        <article class="metric rep-card">
+          <div class="metric-label">
+            REPETITIONS
+            <span>01</span>
+          </div>
+
+          <div class="metric-value">
+            <span id="reps">—</span>
+            <small>reps</small>
+          </div>
+
+          <p>Completed in this set</p>
+        </article>
+
+        <article class="metric">
+          <div class="metric-label">
+            ESTIMATED CURL ANGLE
+            <span>02</span>
+          </div>
+
+          <div class="metric-value">
+            <span id="angle">—</span>
+            <small>°</small>
+          </div>
+
+          <p>Estimated from wrist rotation</p>
+        </article>
+
+        <article class="metric">
+          <div class="metric-label">
+            HEART RATE
+            <span class="heart-icon">♡</span>
+          </div>
+
+          <div class="metric-value">
+            <span id="bpm">—</span>
+            <small>BPM</small>
+          </div>
+
+          <p id="heartStatus">Waiting for sensor</p>
+        </article>
+      </section>
+
+      <!-- Progress, warnings, and reset -->
+      <section class="set-panel" aria-label="Set progress and feedback">
+        <div class="progress-block">
+          <div class="section-heading">
+            <h2>Curl progress</h2>
+            <span id="progressLabel">— / 120°</span>
+          </div>
+
+          <div
+            id="progress"
+            class="progress-track"
+            role="progressbar"
+            aria-label="Estimated curl angle"
+            aria-valuemin="0"
+            aria-valuemax="120"
+            aria-valuenow="0"
+          >
+            <div id="progressFill"></div>
+            <span
+              class="target-marker"
+              title="Top threshold: 100 degrees"
+            ></span>
+          </div>
+
+          <div class="progress-scale">
+            <span>0° · Lowered</span>
+            <span>100° target / 120° max</span>
+          </div>
+        </div>
+
+        <div class="feedback">
+          <span class="small-label">SET FEEDBACK</span>
+
+          <div class="warning-row">
+            <span id="speedWarning" class="warning"> Too fast <b>—</b> </span>
+            <span id="swayWarning" class="warning">
+              Excessive sway <b>—</b>
+            </span>
+          </div>
+
+          <small>Warnings stay until you reset the set.</small>
+        </div>
+
+        <button id="resetButton" disabled>
+          <span aria-hidden="true">↺</span>
+          Reset set
+        </button>
+      </section>
+
+      <!-- Movement and heart-rate graphs -->
+      <section class="charts" aria-label="Reading history">
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow">MOVEMENT</p>
+              <h2>Sideways acceleration</h2>
+            </div>
+
+            <span class="window-label">LAST 30 SEC</span>
+          </div>
+
+          <p class="chart-description">
+            Gravity-corrected motion along the sideways axis.
+          </p>
+
+          <div class="legend">
+            <span>
+              <i class="line teal"></i>
+              Sideways acceleration
+            </span>
+            <span>
+              <i class="line dashed"></i>
+              Configured ±3 m/s²
+            </span>
+          </div>
+
+          <div class="plot">
+            <canvas
+              id="accelChart"
+              role="img"
+              aria-label="Sideways acceleration over the last 30 seconds, in metres per second squared"
+            ></canvas>
+          </div>
+
+          <div class="chart-foot">
+            <span>Acceleration (m/s²)</span>
+            <span>Time (s ago)</span>
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="chart-heading">
+            <div>
+              <p class="eyebrow">HEART RATE</p>
+              <h2>Find your rhythm.</h2>
+            </div>
+
+            <span class="window-label">LAST 2 MIN</span>
+          </div>
+
+          <p class="chart-description">
+            Live BPM with gaps when a reading is unavailable.
+          </p>
+
+          <div class="legend">
+            <span>
+              <i class="line coral"></i>
+              Heart rate
+            </span>
+            <span id="heartGraphStatus">Waiting for readings</span>
+          </div>
+
+          <div class="plot">
+            <canvas
+              id="heartChart"
+              role="img"
+              aria-label="Heart rate over the last two minutes, in beats per minute"
+            ></canvas>
+          </div>
+
+          <div class="chart-foot">
+            <span>Heart rate (BPM)</span>
+            <span>Time (s ago)</span>
+          </div>
+        </article>
+      </section>
+
+      <footer>
+        <span>
+          <span class="footer-dot"></span>
+          Local device dashboard
+        </span>
+        <span>Live view · History stays in this browser tab</span>
+      </footer>
+    </main>
+  </body>
+</html>

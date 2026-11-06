@@ -1,0 +1,656 @@
+/* Theme */
+:root {
+  color-scheme: dark;
+
+  --bg: #101715;
+  --panel: #19221f;
+  --line: #303d36;
+  --text: #eef2e7;
+  --muted: #a2afa4;
+  --accent: #d6ef88;
+  --teal: #83cfb4;
+  --coral: #f5a38e;
+}
+
+/* Base layout */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.shell {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 40px;
+}
+
+/* Header and branding */
+.topbar {
+  height: 94px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: 1.3px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-light {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 34px;
+  background: var(--accent);
+  color: #172313;
+  border-radius: 9px;
+  font-size: 24px;
+  letter-spacing: -4px;
+  padding-right: 4px;
+}
+
+.brand-mark span {
+  font-size: 16px;
+}
+
+/* Connection status and indicator dots */
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  border: 1px solid var(--line);
+  padding: 9px 13px;
+  border-radius: 30px;
+}
+
+.connection i,
+.tag-dot,
+.footer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
+  display: inline-block;
+}
+
+.connection.live i {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px #d6ef8810;
+}
+
+.connection.live {
+  color: var(--accent);
+}
+
+/* Session introduction */
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  padding: 36px 0 24px;
+}
+
+.eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-size: 38px;
+  letter-spacing: -1.4px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.exercise-tag {
+  padding: 10px 15px;
+  background: #223027;
+  border: 1px solid #364431;
+  border-radius: 7px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+}
+
+.tag-dot {
+  background: var(--accent);
+}
+
+.notice {
+  color: var(--muted);
+  min-height: 28px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.notice.error {
+  color: var(--coral);
+}
+
+/* Live measurement cards */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.metric {
+  background: var(--panel);
+  padding: 23px 25px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.metric.rep-card {
+  background: var(--accent);
+  color: #1a291a;
+  border-color: var(--accent);
+}
+
+.metric-label {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  min-height: 20px;
+}
+
+.metric-label > span {
+  opacity: 0.6;
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.metric-label .heart-icon {
+  color: var(--coral);
+  font-size: 24px;
+  opacity: 1;
+}
+
+.metric-value {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 15px 0 10px;
+  font-size: 65px;
+  line-height: 1.1;
+  letter-spacing: -2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-value small {
+  font-size: 17px;
+  letter-spacing: 0;
+  opacity: 0.65;
+}
+
+.metric p {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+
+.rep-card p {
+  color: #465634;
+}
+
+/* Set progress panel */
+.set-panel {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr auto;
+  gap: 28px;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 16px;
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.section-heading h2 {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.section-heading > span {
+  font-size: 12px;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-track {
+  height: 9px;
+  margin: 16px 0 10px;
+  background: #344039;
+  border-radius: 10px;
+  position: relative;
+}
+
+.progress-track > div {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 10px;
+  transition: width 0.18s;
+}
+
+.target-marker {
+  position: absolute;
+  left: 83.333%;
+  width: 2px;
+  height: 15px;
+  top: -3px;
+  background: #eff5e7;
+}
+
+.progress-scale {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+/* Set feedback and warnings */
+.small-label {
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.warning-row {
+  display: flex;
+  gap: 8px;
+  margin: 9px 0;
+}
+
+.warning {
+  border: 1px solid #405044;
+  border-radius: 5px;
+  padding: 7px 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--muted);
+}
+
+.warning b {
+  padding-left: 8px;
+  font-weight: 400;
+}
+
+.warning.active {
+  color: #ffc2aa;
+  background: #562f25;
+  border-color: #875440;
+}
+
+.warning-row + .small-label,
+.feedback > small {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Buttons and keyboard focus */
+button {
+  border: 1px solid #53614f;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 16px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button span {
+  font-size: 17px;
+  margin-right: 5px;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* Chart cards and headings */
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.chart-card {
+  min-width: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 25px 24px 20px;
+}
+
+.chart-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-heading .eyebrow {
+  font-size: 9px;
+  margin-bottom: 7px;
+}
+
+.chart-heading h2 {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  margin: 0;
+}
+
+.window-label {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 6px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.chart-description {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 12px 0 20px;
+  line-height: 1.5;
+}
+
+/* Chart legends */
+.legend {
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 9px;
+  min-height: 20px;
+}
+
+.legend > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.line {
+  display: inline-block;
+  width: 17px;
+  border-top: 2px solid;
+}
+
+.teal {
+  color: var(--teal);
+}
+
+.coral {
+  color: var(--coral);
+}
+
+.dashed {
+  color: #adb5a0;
+  border-top-style: dashed;
+}
+
+/* Chart plots and axis labels */
+.plot {
+  height: 212px;
+  margin-top: 12px;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+/* Footer and stale readings */
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--muted);
+  padding: 25px 0 30px;
+}
+
+.footer-dot {
+  width: 5px;
+  height: 5px;
+  margin-right: 7px;
+}
+
+.stale .metric-value {
+  opacity: 0.4;
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .shell {
+    padding-top: 10px;
+  }
+}
+
+/* Tablets and smaller desktops */
+@media (max-width: 1000px) {
+  .set-panel {
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+
+  .set-panel button {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .progress-block {
+    grid-row: 1 / 3;
+    align-self: center;
+  }
+
+  .metric {
+    padding: 20px;
+  }
+
+  .metric-value {
+    font-size: 53px;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 700px) {
+  .shell {
+    padding: 0 18px;
+  }
+
+  .topbar {
+    height: 76px;
+  }
+
+  .brand {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .brand-mark {
+    width: 29px;
+    height: 29px;
+  }
+
+  .connection {
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .intro {
+    padding-top: 28px;
+    display: block;
+  }
+
+  h1 {
+    font-size: 31px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .exercise-tag {
+    display: inline-flex;
+    margin-top: 18px;
+  }
+
+  .metrics {
+    gap: 8px;
+  }
+
+  .metric {
+    padding: 15px 12px;
+  }
+
+  .metric-label {
+    font-size: 8px;
+    line-height: 1.5;
+    letter-spacing: 0.5px;
+    min-height: 25px;
+  }
+
+  .metric-label > span {
+    display: none;
+  }
+
+  .metric-value {
+    font-size: 37px;
+    gap: 3px;
+    margin: 15px 0 10px;
+  }
+
+  .metric-value small {
+    font-size: 10px;
+  }
+
+  .metric p {
+    font-size: 10px;
+    line-height: 1.5;
+    min-height: 30px;
+  }
+
+  .set-panel {
+    padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .progress-block {
+    grid-row: auto;
+  }
+
+  .set-panel button {
+    grid-column: 1;
+    justify-self: stretch;
+  }
+
+  .feedback {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+
+  .charts {
+    grid-template-columns: 1fr;
+    margin-top: 16px;
+  }
+
+  .chart-card {
+    padding: 22px 18px;
+  }
+
+  .plot {
+    height: 220px;
+  }
+
+  footer {
+    flex-direction: column;
+    font-size: 9px;
+  }
+
+  .legend {
+    font-size: 9px;
+  }
+}
