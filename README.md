@@ -6,7 +6,7 @@ An ESP32-S3-based exercise monitoring system that tracks movement, estimates hea
 
 ## Project Overview
 
-The Exercise Monitor is a wearable exercise-tracking prototype designed to monitor the quality of biceps curl exercises.
+The Exercise Monitor is an exercise-tracking prototype intended for wrist-mounted monitoring of movement during biceps curls (may add more exercises in the future).
 
 Using an accelerometer, gyroscope, and optical heart-rate sensor, the system tracks arm movement, estimates curl angles, counts completed repetitions, and identifies excessive movement speed and sideways sway.
 
@@ -16,11 +16,11 @@ Sensor readings are displayed on an onboard OLED and transmitted wirelessly to a
 
 ![Exercise Monitor hardware prototype](docs/images/prototype.jpg)
 
-*Current breadboard prototype. Again, WIP.*
+*Current breadboard prototype. WIP.*
 
-## Web
+## Web Dashboard
 
-![Webpage](docs/images/web.png)
+![Exercise Monitor dashboard displaying live sensor readings](docs/images/web.png)
 
 ## Features
 
@@ -31,7 +31,7 @@ Sensor readings are displayed on an onboard OLED and transmitted wirelessly to a
 - **OLED Display:** Displays curl angle, repetition count, heart rate, and exercise warnings.
 - **Live Web Dashboard:** Displays sensor readings, movement history, heart-rate history, and set progress.
 - **Wireless Communication:** Hosts a local Wi-Fi network and uses WebSockets to transmit live readings and receive reset commands.
-- **Touch Reset:** Uses the ESP32-S3 capacitive-touch functionality to reset the current exercise set. Will move the reset functionality in a button in the future.
+- **Touch Reset:** Uses the ESP32-S3 capacitive-touch functionality to reset the current exercise set. A physical reset button is planned for a future hardware revision.
 
 ## Hardware Components
 
@@ -41,14 +41,13 @@ Sensor readings are displayed on an onboard OLED and transmitted wirelessly to a
 | MPU6500 | Accelerometer and gyroscope |
 | MAX30102 | Optical heart-rate sensor |
 | SSD1306 OLED | On-device display |
-| WS2812-compatible NeoPixel | Visual feedback |
 | Breadboard and jumper wires | Prototyping and connections |
 
 ## System Architecture
 
 The ESP32-S3 acts as the central controller, collecting sensor readings, processing movement data, and updating the output devices.
 
-- The MPU6500 and MAX30102 communicate with the microcontroller through I2C.
+- The MPU6500, MAX30102, and OLED communicate with the microcontroller through I2C.
 - The accelerometer and gyroscope measurements are combined to estimate orientation while compensating for gravity.
 - The MAX30102 provides optical readings used for heartbeat detection and BPM estimation.
 - The OLED and NeoPixel provide immediate feedback.
@@ -110,8 +109,10 @@ The web dashboard is maintained separately from the firmware:
 
 6. Upload the dashboard files to the ESP32-S3 LittleFS filesystem using **Upload Filesystem Image**.
 
-7. Connect your computer or phone to the ESP32-S3 Wi-Fi network.
+7. Keep the motion sensor flat and stationary during startup calibration
 
-8. Open the dashboard using the device's local IP address.
+8. Connect your computer or phone to the ESP32-S3 Wi-Fi network.
 
-*This project is purely out of personal interest. Heart-rate readings and movement estimates are experimental and are not intended for medical use.*
+9. Open the dashboard using the device's local IP address (http://192.168.4.1).
+
+*This project was done purely out of personal interest. Heart-rate readings and movement estimates are experimental and are not intended for medical use.*
