@@ -42,7 +42,7 @@ function setWarning(id, active) {
   element.querySelector("b").textContent = active ? "Detected" : "Clear";
 }
 
-// Validate incoming readings, update the dashboard, and record fresh graph samples.
+// Validate incoming readings and update the displayed values and graph history.
 function receiveReadings(data) {
   if (typeof data.sampleMs !== "number" || typeof data.ready !== "boolean") {
     throw new Error("Invalid device response");
@@ -78,16 +78,21 @@ function receiveReadings(data) {
     lastSampleTime = data.sampleMs;
     lastSampleReceivedAt = now;
 
-    accelerationHistory.push({ time: now, value: data.sideAcceleration });
+    accelerationHistory.push({
+      time: now,
+      value: data.sideAcceleration,
+    });
 
-    // Missing BPM values create gaps in the graph instead of displaying zero.
+    // Missing BPM values create gaps instead of displaying zero.
     heartHistory.push({
       time: now,
-      value: data.heartConnected && data.fingerPresent && data.bpmAvailable ? data.bpm : null,
+      value: data.heartConnected && data.fingerPresent && data.bpmAvailable
+        ? data.bpm
+        : null,
     });
 
     if (resetConfirmed) {
-      showNotice("Set reset. Ready for your next rep.");
+      showNotice("Set reset.");
     }
   }
 
@@ -112,9 +117,11 @@ function receiveReadings(data) {
       ? "Place finger on sensor"
       : !hasBpm
         ? "Detecting… Hold still"
-        : "Live heart-rate estimate";
+        : "Estimated BPM";
 
-  byId("heartGraphStatus").textContent = hasBpm ? "Receiving readings" : "No current BPM";
+  byId("heartGraphStatus").textContent = hasBpm
+    ? "Receiving readings"
+    : "No current BPM";
 
   const progress = Math.max(0, Math.min(120, data.angle));
 
@@ -127,7 +134,7 @@ function receiveReadings(data) {
 
   swayThreshold = Number.isFinite(data.swayThreshold) ? data.swayThreshold : 3;
 
-  // Allow another reset attempt if incoming readings do not confirm it within five seconds.
+  // Allow another reset attempt if confirmation takes longer than five seconds.
   if (isResetPending && now - resetRequestedAt > 5000) {
     isResetPending = false;
     byId("resetButton").disabled = false;
@@ -135,13 +142,16 @@ function receiveReadings(data) {
   } else if (isResetPending) {
     showNotice("Reset requested. Waiting for the tracker…");
   } else {
-    showNotice("Live readings · Warnings use your configured thresholds.");
+    showNotice("");
   }
 }
 
 function markDisconnected() {
   setConnection(false, "Disconnected");
-  showNotice("Live connection lost. Retrying automatically; keep connected to the device Wi-Fi.", true);
+  showNotice(
+    "Live connection lost. Retrying automatically; keep connected to the device Wi-Fi.",
+    true
+  );
 
   byId("heartStatus").textContent = "Connection lost · readings are stale";
   byId("heartGraphStatus").textContent = "Connection lost";
@@ -161,7 +171,11 @@ function scheduleReconnect() {
 
 // Maintain one WebSocket connection to the device serving this page.
 function connectWebSocket() {
-  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) return;
+  if (
+    socket &&
+    (socket.readyState === WebSocket.OPEN ||
+      socket.readyState === WebSocket.CONNECTING)
+  ) return;
 
   setConnection(false, "Connecting");
 
@@ -171,7 +185,10 @@ function connectWebSocket() {
   const host = window.location.hostname;
 
   if (!host || window.location.protocol !== "http:") {
-    showNotice("Open this dashboard from http://192.168.4.1 while connected to the device Wi-Fi.", true);
+    showNotice(
+      "Open this dashboard from http://192.168.4.1 while connected to the device Wi-Fi.",
+      true
+    );
     return;
   }
 
@@ -187,7 +204,7 @@ function connectWebSocket() {
 
   socket = currentSocket;
 
-  // Each handler ignores events from connections that have already been replaced.
+  // Ignore events from connections that have already been replaced.
   currentSocket.onopen = () => {
     if (socket !== currentSocket) return;
 
@@ -230,11 +247,16 @@ function connectWebSocket() {
     markDisconnected();
     scheduleReconnect();
   };
-};
+}
 
-// Send one reset request; a changed reset ID in subsequent readings confirms it.
+// A changed reset ID in subsequent readings confirms the reset.
 byId("resetButton").addEventListener("click", () => {
-  if (!isConnected || isResetPending || !socket || socket.readyState !== WebSocket.OPEN) return;
+  if (
+    !isConnected ||
+    isResetPending ||
+    !socket ||
+    socket.readyState !== WebSocket.OPEN
+  ) return;
 
   if (socket.bufferedAmount > 0) {
     showNotice("Connection is busy. Try resetting again in a moment.", true);
@@ -261,15 +283,20 @@ byId("resetButton").addEventListener("click", () => {
 function drawChart(canvas, history, duration, isHeartChart) {
   const now = performance.now();
 
-  while (history.length && history[0].time < now - duration) history.shift();
+  while (history.length && history[0].time < now - duration) {
+    history.shift();
+  }
 
   const width = canvas.clientWidth;
   const height = canvas.clientHeight;
 
-  // Scale the drawing buffer for sharper rendering on high-density screens.
+  // Scale the drawing buffer for high-density screens.
   const ratio = Math.min(window.devicePixelRatio || 1, 2);
 
-  if (canvas.width !== Math.round(width * ratio) || canvas.height !== Math.round(height * ratio)) {
+  if (
+    canvas.width !== Math.round(width * ratio) ||
+    canvas.height !== Math.round(height * ratio)
+  ) {
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
   }
@@ -284,21 +311,27 @@ function drawChart(canvas, history, duration, isHeartChart) {
   const top = 12;
   const bottom = height - 28;
 
-  const values = history.filter((point) => point.value !== null).map((point) => point.value);
+  const values = history
+    .filter((point) => point.value !== null)
+    .map((point) => point.value);
 
   let min;
   let max;
 
-  // Fit the vertical scale to the readings, keeping acceleration centered on zero.
+  // Fit the vertical scale to the readings; center acceleration on zero.
   if (isHeartChart) {
-    min = values.length ? Math.max(0, Math.floor((Math.min(...values) - 10) / 20) * 20) : 40;
-    max = values.length ? Math.max(min + 40, Math.ceil((Math.max(...values) + 10) / 20) * 20) : 140;
+    min = values.length
+      ? Math.max(0, Math.floor((Math.min(...values) - 10) / 20) * 20)
+      : 40;
+
+    max = values.length
+      ? Math.max(min + 40, Math.ceil((Math.max(...values) + 10) / 20) * 20)
+      : 140;
   } else {
     max = Math.max(4, Math.ceil(Math.max(0, ...values.map(Math.abs))));
     min = -max;
   }
 
-  // Convert timestamps and measurement values into canvas coordinates.
   const x = (time) => right - ((now - time) / duration) * (right - left);
   const y = (value) => bottom - ((value - min) / (max - min)) * (bottom - top);
 
@@ -309,13 +342,13 @@ function drawChart(canvas, history, duration, isHeartChart) {
   for (let tick = 0; tick <= 4; tick++) {
     const value = min + ((max - min) * tick) / 4;
 
-    context.strokeStyle = "#303d36";
+    context.strokeStyle = "#333333";
     context.beginPath();
     context.moveTo(left, y(value));
     context.lineTo(right, y(value));
     context.stroke();
 
-    context.fillStyle = "#98a69b";
+    context.fillStyle = "#aaaaaa";
     context.textAlign = "right";
     context.fillText(Number(value.toFixed(1)), left - 8, y(value) + 3);
 
@@ -323,11 +356,11 @@ function drawChart(canvas, history, duration, isHeartChart) {
     context.fillText(
       tick === 4 ? "0" : String(Math.round((duration / 1000) * (1 - tick / 4))),
       left + ((right - left) * tick) / 4,
-      height - 7,
+      height - 7
     );
   }
 
-  // Clip graph lines to the plot area so they cannot overlap the labels.
+  // Keep graph lines inside the plot area.
   context.save();
   context.beginPath();
   context.rect(left, top, right - left, bottom - top);
@@ -335,7 +368,7 @@ function drawChart(canvas, history, duration, isHeartChart) {
 
   if (!isHeartChart) {
     context.setLineDash([4, 5]);
-    context.strokeStyle = "#9da88b";
+    context.strokeStyle = "#aaaaaa";
 
     for (const threshold of [-swayThreshold, swayThreshold]) {
       context.beginPath();
@@ -354,7 +387,7 @@ function drawChart(canvas, history, duration, isHeartChart) {
 
   let previous = null;
 
-  // Break the line for unavailable readings or sample gaps of at least 1.2 seconds.
+  // Break the line for missing readings or gaps of at least 1.2 seconds.
   for (const point of history) {
     if (point.value === null) {
       previous = null;
@@ -375,18 +408,29 @@ function drawChart(canvas, history, duration, isHeartChart) {
 
   if (!values.length) {
     context.textAlign = "center";
-    context.fillStyle = "#a2afa4";
-    context.fillText("Waiting for readings", (left + right) / 2, (top + bottom) / 2);
+    context.fillStyle = "#aaaaaa";
+    context.fillText(
+      "Waiting for readings",
+      (left + right) / 2,
+      (top + bottom) / 2
+    );
   }
 }
 
 function redraw() {
   const now = performance.now();
 
-  const hasConnectTimeout = socket && socket.readyState === WebSocket.CONNECTING && now - connectionStartedAt > 10000;
-  const hasDataTimeout = socket && socket.readyState === WebSocket.OPEN && now - lastMessageAt > 10000;
+  const hasConnectTimeout =
+    socket &&
+    socket.readyState === WebSocket.CONNECTING &&
+    now - connectionStartedAt > 10000;
 
-  // Reconnect if connection establishment or incoming data stalls for ten seconds.
+  const hasDataTimeout =
+    socket &&
+    socket.readyState === WebSocket.OPEN &&
+    now - lastMessageAt > 10000;
+
+  // Reconnect if connection establishment or incoming data stalls.
   if (hasConnectTimeout || hasDataTimeout) {
     const oldSocket = socket;
 
